@@ -52,29 +52,38 @@ class WalletController extends BaseApiController
 
     public function fundAuthUserWallet(FundWalletRequest $request)
     {
-        $funding_process = $this->WalletService->fundWallet(wallet: auth('user-api')->user()->wallet ,amount: $request->validated()['amount']);
+        $funding_process = $this->WalletService->fundWallet(wallet: auth('user-api')->user()->wallet, amount: $request->validated()['amount']);
         if ($funding_process) {
-            return $this->respondWithSuccess('Fund wallet successfully');
+            return $this->respondWithSuccess(__('main.fund_wallet_successfully'));
         }
 
-        return $this->respondWithError('Failed to fund wallet');
+        return $this->respondWithError(__('main.failed_to_fund_wallet'));
     }
 
     public function transferMoney(TransferMoneyRequest $request)
     {
+        $amount= $request->validated()['amount'];
         $recipient_wallet = User::where('phone', $request->validated()['recipient_phone'])->first()->wallet;
         $sender_wallet = auth('user-api')->user()->wallet;
+
+        $fee = $this->WalletService->calculateTransferFee($amount);
+        $amount_after_set_fee = $amount + $fee;
+
+        if ($this->WalletService->checkInsufficientBalance($sender_wallet, $amount_after_set_fee)) {
+            return $this->respondWithError(message: __('main.insufficient_balance'));
+        }
 
         $transfer_process = $this->WalletService->transferP2P(
             wallet_from: $sender_wallet,
             wallet_to: $recipient_wallet,
-            amount: $request->validated()['amount']
+            amount: $amount,
+            fee: $fee
         );
 
         if ($transfer_process) {
-            return $this->respondWithSuccess('Transfer money successfully');
+            return $this->respondWithSuccess(__('main.transfer_money_successfully'));
         }
 
-        return $this->respondWithError('Failed to transfer money');
+        return $this->respondWithError(__('main.failed_transfer_money'));
     }
 }

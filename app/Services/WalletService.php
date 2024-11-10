@@ -58,20 +58,17 @@ class WalletService extends BaseService
         }
     }
 
-    public function transferP2P(Wallet $wallet_from, Wallet $wallet_to, float $amount)
+    public function transferP2P(Wallet $wallet_from, Wallet $wallet_to, float $amount, float $fee): bool
     {
+        $amount_after_set_fee = $amount + $fee;
+        if ($this->checkInsufficientBalance($wallet_from, ($amount_after_set_fee))) {
+            return false;
+        }
+        
         DB::beginTransaction();
-
         try {
-            $fee = $this->calculateTransferFee($amount);
-            $total_amount_after_fee = $amount + $fee;
-
-            if ($wallet_from->balance < $total_amount_after_fee) {
-                $this->throwHttpExceptionForWebAndApi(__('main.Insufficient balance'), 422);
-            }
-
             $this->WalletRepository->update($wallet_from->id, [
-                'balance' => $wallet_from->balance - $total_amount_after_fee,
+                'balance' => $wallet_from->balance - ($amount_after_set_fee),
             ]);
 
             $this->WalletRepository->update($wallet_to->id, [
@@ -112,12 +109,17 @@ class WalletService extends BaseService
         }
     }
 
-    private function calculateTransferFee(float $amount): float
+    public function calculateTransferFee(float $amount): float
     {
         if ($amount > 25) {
-            return 2.5 + (0.1 * $amount);
+            return round(2.5 + (0.1 * $amount), 2);
         }
 
         return 0;
+    }
+
+    public function checkInsufficientBalance(Wallet $wallet, float $amount): bool
+    {
+        return $wallet->balance < $amount;
     }
 }

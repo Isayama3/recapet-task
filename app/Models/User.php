@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Base\Traits\Custom\NotificationAttribute;
 use App\Base\Traits\Model\FilterSort;
 use Illuminate\Database\Eloquent\Casts\Attribute;

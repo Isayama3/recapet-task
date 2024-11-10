@@ -17,6 +17,10 @@ class Wallet extends BaseModel
 
     public function transactions()
     {
-        return $this->hasMany(WalletTransaction::class);
+        return $this->hasMany(WalletTransaction::class)
+            ->where(function ($query) {
+                $query->where('wallet_id', $this->id)
+                    ->orWhere('recipient_wallet_id', $this->id);
+            });
     }
 }
