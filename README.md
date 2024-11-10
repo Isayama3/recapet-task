@@ -7,11 +7,11 @@ Application Documentation
         - MySQL (or your preferred database)
 
 2. Project Setup Instructions
-    Step 1: Clone the Repository
+    1. Step 1: Clone the Repository
         - git clone <repository-url>
         - cd <project-directory>
         
-    Step 2: Environment Configuration
+    2. Step 2: Environment Configuration
         - Create Environment Files:
         - Copy the default .env file to create environment configurations for development and testing:
         - cp .env .env.test
@@ -19,11 +19,11 @@ Application Documentation
         - Run the following command to generate an application key:
         - php artisan key:generate
    
-    Step 3: Install Dependencies
+    3. Step 3: Install Dependencies
         - composer update
         - This will install all necessary dependencies specified in the composer.json file.
 
-    Step 4: Database Setup
+    4. Step 4: Database Setup
         - Run Migrations and Seeders:
         - Use the following command to set up your database with fresh migrations and seed data:
             - php artisan migrate:fresh --seed
@@ -36,13 +36,13 @@ Application Documentation
                 - DB_DATABASE=your_database
                 - DB_USERNAME=your_username
                 - DB_PASSWORD=your_password
-    Step 5: Serving the Application
+    5. Step 5: Serving the Application
         - Start the development server with:
         - php artisan serve
         - The application should now be accessible at http://127.0.0.1:8000.
    
 4. Postman API Access
-    Step 1: Import Postman Collection
+    1. Step 1: Import Postman Collection
     - Import the Collection:
     - Open Postman and click on “Import” in the top-left corner.
     - Locate and import the Postman collection file from the project root. This will load all API endpoints into Postman.
